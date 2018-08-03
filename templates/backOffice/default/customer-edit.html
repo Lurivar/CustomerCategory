@@ -1,0 +1,54 @@
+{loop name="customer_customer_category" type="customer_customer_category" customer_id=$customer_id}
+    {assign var="_customer_category_id_" value=$CUSTOMER_CATEGORY_ID}
+    {assign var="_siret_" value=$SIRET}
+    {assign var="_vat_" value=$VAT}
+{/loop}
+
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">{intl l="Category of this customer" d="customercategory"}</div>
+            <div class="col-md-12">
+                <div class="col-md-12">
+                    {form name="customer.customer.category.form"}
+                    <form class="form-horizontal" action="{url path="/admin/module/CustomerCategory/customer/update"}" method="post">
+
+                    {form_hidden_fields form=$form}
+
+                    {if $form_error}<div class="alert alert-danger">{$form_error_message}</div>{/if}
+
+                    {form_field form=$form field='customer_id'}
+                        <input type="hidden" name="{$name}" value="{$customer_id}" />
+                    {/form_field}
+
+                    {form_field form=$form field='customer_category_id'}
+                    <div class="form-group {if $error}has-error{/if}">
+                        <label for="{$label_attr.for}" class="control-label group-type-status">{$label} *</label>
+                        <div class="control-input">
+                            <select multiple name="{$name}[]" id="{$label_attr.for}" class="form-control">
+                                {loop name="customer_category" type="customer_category"}
+                                {$CUSTOMER_CATEGORY_ID} {$CODE}
+                                <option data-code="{$CODE}" value="{$CUSTOMER_CATEGORY_ID}" {if in_array($CUSTOMER_CATEGORY_ID, explode(',',{$_customer_category_id_}))}selected{/if}>{$TITLE_CUSTOMER_CATEGORY}</option>
+                                {/loop}
+                            </select>
+                        </div>
+                    </div>
+                    {/form_field}
+
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <label class="control-label"></label>
+                            <button class="btn btn-default btn-primary form-control" type="submit">
+                                <span class="glyphicon glyphicon-check"></span>
+                                {intl l="Update"}
+                            </button>
+                        </div>
+                    </div>
+
+                    </form>
+                    {/form}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,324 @@
+<div class="general-block-decorator" id="CustomerCategory">
+    <div class="title">
+        {intl l="Customer Category" d='customercategory.bo.default'}
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <!-- Tab menu -->
+            <ul id="tabbed-menu" class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#families">{intl l="Families" d='customercategory.bo.default'}</a> </li>
+                <li><a data-toggle="tab" href="#export_customers">{intl l="Export Customers" d='customercategory.bo.default'}</a></li>
+            </ul>
+
+            <div class="tab-content">
+
+                <!-- Families managing tab -->
+                <div id="families" class="tab-pane active form-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {if $hide_flags != true}
+                                <ul class="nav nav-pills">
+                                    {loop name="lang_list" type="lang"}
+                                        <li {if $ID == $edit_language_id}class="active"{/if}>
+                                            {if $current_tab}
+                                                {$lang_url = {url path="/admin/module/CustomerCategory" edit_language_id=$ID current_tab=$current_tab}}
+                                            {else}
+                                                {$lang_url = {url path="/admin/module/CustomerCategory" edit_language_id=$ID}}
+                                            {/if}
+                                            <a class="language-change-button" data-language-id="{$ID}" href="{$lang_url nofilter}" title="{intl l='Edit information in %lng' lng={$TITLE}}">
+                                                <img src="{image file="assets/img/flags/$CODE.png"}" alt="{$TITLE}" />
+                                            </a>
+                                        </li>
+                                    {/loop}
+                                </ul>
+                            {/if}
+                        </div>
+
+                        {form name="customer.category.delete.form"}
+                            {if $form_error}
+                                <div class="alert alert-danger">{$form_error_message}</div
+                            {/if}
+                        {/form}
+
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            {intl l="ID"}
+                                        </th>
+                                        <th>
+                                            {intl l="Code"}
+                                        </th>
+                                        <th>
+                                            {intl l="Title"}
+                                        </th>
+                                        <th>
+                                            {intl l="Default"}
+                                        </th>
+                                        <th>
+                                            {intl l="Action"}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ifloop rel="customer_category"}
+
+                                        <!-- Default category -->
+                                        {form name='customer_category_update_default_form'}
+                                            <form action="{url path='/admin/module/CustomerCategory/update-default'}" method="post" id="update-default-category-form">
+
+                                                {form_hidden_fields form=$form}
+
+                                                {form_field form=$form field="customer_category_id"}
+                                                    <input type="hidden" name="{$name}" id="default_category_id">
+                                                {/form_field}
+                                            </form>
+                                        {/form}
+
+                                        <!-- Families list -->
+                                        {loop type="customer_category" name="customer_category" lang=$edit_language_id  force_return="on"}
+                                            <tr>
+                                                <td>
+                                                    {$CUSTOMER_CATEGORY_ID}
+                                                </td>
+                                                <td>
+                                                    {$CODE}
+                                                </td>
+                                                <td>
+                                                    {$TITLE_CUSTOMER_CATEGORY}
+                                                </td>
+                                                <td>
+                                                    <div class="switch-small update-default-category" data-id="{$CUSTOMER_CATEGORY_ID}" data-on="success" data-off="danger" data-on-label="<i class='glyphicon glyphicon-ok-circle'></i>" data-off-label="<i class='glyphicon glyphicon-remove-circle'></i>">
+                                                        <input type="radio" name="is_default" {if $IS_DEFAULT}checked{/if} />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <a class="btn btn-info pull-left js-action-update" data-id="{$CUSTOMER_CATEGORY_ID}" data-code="{$CODE}" data-title="{$TITLE_CUSTOMER_CATEGORY}" style="margin-right: 5px;">{intl l="Edit" d='customercategory.bo.default'}</a>
+                                                    <a class="btn btn-danger pull-left js-action-delete" data-id="{$CUSTOMER_CATEGORY_ID}" style="margin-right: 5px;">{intl l="Delete"}</a>
+                                                </td>
+                                            </tr>
+                                        {/loop}
+                                    {/ifloop}
+                                    {elseloop rel="customer_category"}
+                                        <tr>
+                                            <td colspan="4" class="text-center">
+                                                {intl l="No category" d='customercategory.bo.default'}
+                                            </td>
+                                        </tr>
+                                    {/elseloop}
+                                </tbody>
+                                <tfoot class="text-center">
+                                    <tr>
+                                        <td colspan="4">
+                                            {form name="customer.category.create.form"}
+                                                <form action="{url path="/admin/module/CustomerCategory/create"}" method="POST" class="form-inline">
+                                                    {if $form_error}
+                                                        <div class="alert alert-danger">{$form_error_message}</div
+                                                    {/if}
+                                                    {form_hidden_fields form=$form}
+                                                    {form_field form=$form field="locale"}
+                                                        <input type="hidden" name="{$name}" value="{$edit_language_locale}" />
+                                                    {/form_field}
+                                                    {form_field form=$form field="code"}
+                                                        <div class="form-group{if $error} has-error{/if}">
+                                                            <input class="form-control" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                                        </div>
+                                                    {/form_field}
+                                                    {form_field form=$form field="title"}
+                                                        <div class="form-group{if $error} has-error{/if}">
+                                                            <input class="form-control" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                                        </div>
+                                                    {/form_field}
+                                                    <div class="form-group">
+                                                        <button type="submit" class="btn btn-primary js-action-create">{intl l="Add"}</button>
+                                                    </div>
+                                                </form>
+                                            {/form}
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    {form name="customer.category.delete.form"}
+                        <div class="modal js-modal-delete" tabindex="-1" role="dialog" aria-labelledby="Delete category" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form action="" method="POST">
+                                    {form_hidden_fields form=$form}
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            {intl l="Do you really want to delete this customer category ?" d='customercategory.bo.default'}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">{intl l="No"}</button>
+                                            <button type="submit" type="button" class="btn btn-danger js-action-delete-confirm">{intl l="Yes"}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    {/form}
+
+                    {form name="customer.category.update.form"}
+                        <div class="modal js-modal-update" tabindex="-1" role="dialog" aria-labelledby="Update category" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form action="" method="POST">
+                                    {form_hidden_fields form=$form}
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            {form_field form=$form field="locale"}
+                                                <input type="hidden" name="{$name}" value="{$edit_language_locale}" />
+                                            {/form_field}
+                                            {form_field form=$form field="code"}
+                                                <div class="form-group{if $error} has-error{/if}">
+                                                    <label>{$label}</label>
+                                                    <input class="form-control js-field-code" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                                </div>
+                                            {/form_field}
+                                            {form_field form=$form field="title"}
+                                                <div class="form-group{if $error} has-error{/if}">
+                                                    <label>{$label}</label>
+                                                    <input class="form-control js-field-title" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                                </div>
+                                            {/form_field}
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">{intl l="Cancel"}</button>
+                                            <button type="submit" type="button" class="btn btn-primary js-action-delete-confirm">{intl l="Update"}</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    {/form}
+                </div>
+
+                <!-- Export Customers tab -->
+                <div id="export_customers" class="tab-pane form-container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {if $hide_flags != true}
+                            <ul class="nav nav-pills">
+                                {loop name="lang_list" type="lang"}
+                                <li {if $ID == $edit_language_id}class="active"{/if}>
+                                {if $current_tab}
+                                {$lang_url = {url path="/admin/module/CustomerCategory" edit_language_id=$ID current_tab=$current_tab}}
+                                {else}
+                                {$lang_url = {url path="/admin/module/CustomerCategory" edit_language_id=$ID}}
+                                {/if}
+                                <a class="language-change-button" data-language-id="{$ID}" href="{$lang_url nofilter}" title="{intl l='Edit information in %lng' lng={$TITLE}}">
+                                    <img src="{image file="assets/img/flags/$CODE.png"}" alt="{$TITLE}" />
+                                </a>
+                                </li>
+                                {/loop}
+                            </ul>
+                            {/if}
+                        </div>
+
+                        {form name="customer.category.delete.form"}
+                        {if $form_error}
+                        <div class="alert alert-danger">{$form_error_message}</div
+                                {/if}
+                                {/form}
+
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        {intl l="ID"}
+                                    </th>
+                                    <th>
+                                        {intl l="Code"}
+                                    </th>
+                                    <th>
+                                        {intl l="Title"}
+                                    </th>
+                                    <th>
+                                        {intl l="Action"}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {ifloop rel="customer_category"}
+
+
+                                <!-- Families list -->
+                                {loop type="customer_category" name="customer_category" lang=$edit_language_id  force_return="on"}
+                                <tr>
+                                    <td>
+                                        {$CUSTOMER_CATEGORY_ID}
+                                    </td>
+                                    <td>
+                                        {$CODE}
+                                    </td>
+                                    <td>
+                                        {$TITLE_CUSTOMER_CATEGORY}
+                                    </td>
+                                    <td>
+                                        <a class="btn btn-info pull-left js-action-export" data-id="{$CUSTOMER_CATEGORY_ID}" data-code="{$CODE}" data-title="{$TITLE_CUSTOMER_CATEGORY}" style="margin-right: 5px;">{intl l="Export" d='customercategory.bo.default'}</a>
+                                    </td>
+                                </tr>
+                                {/loop}
+                                {/ifloop}
+                                {elseloop rel="customer_category"}
+                                <tr>
+                                    <td colspan="4" class="text-center">
+                                        {intl l="No category" d='customercategory.bo.default'}
+                                    </td>
+                                </tr>
+                                {/elseloop}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                    {form name="customer.category.export.form"}
+                    <div class="modal js-modal-export" tabindex="-1" role="dialog" aria-labelledby="Export category" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <form action="" method="POST">
+                                {form_hidden_fields form=$form}
+                                <div class="modal-content">
+                                    <div class="modal-body">
+                                        {form_field form=$form field="productref"}
+                                        <div class="form-group{if $error} has-error{/if}">
+                                            <label>{$label}</label>
+                                            <input class="form-control js-field-productref" type="text" required placeholder="{$label}" name="{$name}" value="{$value}" />
+                                        </div>
+                                        {/form_field}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">{intl l="Cancel"}</button>
+                                        <button type="submit" type="button" class="btn btn-primary js-action-delete-confirm">{intl l="Export"}</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    {/form}
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="update-default-category-failed" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3>{intl l="An error occured" d='customercategory.bo.default'}</h3>
+            </div>
+            <div class="modal-body" id="update-default-category-failed-body">
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+{default_translation_domain domain=$messageDomain}
+{loop type="customer_customer_category" name="customer_customer_category" customer_id={$customerId} }
+<div id="customer-customer-category-{$CUSTOMER_ID}-{$CUSTOMER_CATEGORY_ID}">
+	{loop type="customer_category" name="customer_category" id={$CUSTOMER_CATEGORY_ID} }
+	<table class="table" role="presentation" summary="{$title}">
+		<tbody>
+			<tr>
+				<th>{intl l='Customer category'}</th>
+				<td>{$TITLE_CUSTOMER_CATEGORY}</td>
+			</tr>
+			{if $CODE != $particular}
+				{* The Customer should have a SIRET and a VAT. Display them. *}
+			<tr>
+				<th>{intl l='Siret number'}</th>
+				<td>{$SIRET}</td>
+			</tr>
+			<tr>
+				<th>{intl l='Vat'}</th>
+				<td>{$VAT}</td>
+			</tr>
+			{/if}
+		</tbody>
+	</table>
+	{/loop}
+</div>
+{/loop}

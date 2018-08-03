@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<routes xmlns="http://symfony.com/schema/routing"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
+
+    <!-- Customer Category -->
+    <route id="customer.category.create" path="/admin/module/CustomerCategory/create" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::createAction</default>
+    </route>
+
+    <route id="customer.category.update" path="/admin/module/CustomerCategory/update/{id}" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::updateAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
+    <route id="customer.category.update.default" path="/admin/module/CustomerCategory/update-default" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::updateDefaultAction</default>
+    </route>
+
+    <route id="customer.category.delete" path="/admin/module/CustomerCategory/delete/{id}" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::deleteAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
+    <route id="customer.category.export" path="/admin/module/CustomerCategory/export/{id}" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::exportAction</default>
+        <requirement key="id">\d+</requirement>
+    </route>
+
+    <route id="customer.category.customer.update" path="/admin/module/CustomerCategory/customer/update" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryAdminController::customerUpdateAction</default>
+    </route>
+
+    <!-- Prices management -->
+    <route id="customer.category.price.update" path="/admin/module/CustomerCategory/update-price-calculation" methods="post">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryPriceController::updateAction</default>
+    </route>
+
+    <route id="customer.category.price.calculate" path="/admin/module/CustomerCategory/calculate-all-prices" methods="get">
+        <default key="_controller">CustomerCategory\Controller\Admin\CustomerCategoryPriceController::calculatePricesAction</default>
+    </route>
+
+</routes>
