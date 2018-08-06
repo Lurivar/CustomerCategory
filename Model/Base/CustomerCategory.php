@@ -8,10 +8,6 @@ use \PDO;
 use CustomerCategory\Model\CustomerCategory as ChildCustomerCategory;
 use CustomerCategory\Model\CustomerCategoryI18n as ChildCustomerCategoryI18n;
 use CustomerCategory\Model\CustomerCategoryI18nQuery as ChildCustomerCategoryI18nQuery;
-use CustomerCategory\Model\CustomerCategoryOrder as ChildCustomerCategoryOrder;
-use CustomerCategory\Model\CustomerCategoryOrderQuery as ChildCustomerCategoryOrderQuery;
-use CustomerCategory\Model\CustomerCategoryPrice as ChildCustomerCategoryPrice;
-use CustomerCategory\Model\CustomerCategoryPriceQuery as ChildCustomerCategoryPriceQuery;
 use CustomerCategory\Model\CustomerCategoryQuery as ChildCustomerCategoryQuery;
 use CustomerCategory\Model\Map\CustomerCategoryTableMap;
 use Propel\Runtime\Propel;
@@ -92,18 +88,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
     protected $updated_at;
 
     /**
-     * @var        ObjectCollection|ChildCustomerCategoryPrice[] Collection to store aggregation of ChildCustomerCategoryPrice objects.
-     */
-    protected $collCustomerCategoryPrices;
-    protected $collCustomerCategoryPricesPartial;
-
-    /**
-     * @var        ObjectCollection|ChildCustomerCategoryOrder[] Collection to store aggregation of ChildCustomerCategoryOrder objects.
-     */
-    protected $collCustomerCategoryOrders;
-    protected $collCustomerCategoryOrdersPartial;
-
-    /**
      * @var        ObjectCollection|ChildCustomerCategoryI18n[] Collection to store aggregation of ChildCustomerCategoryI18n objects.
      */
     protected $collCustomerCategoryI18ns;
@@ -130,18 +114,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
      * @var        array[ChildCustomerCategoryI18n]
      */
     protected $currentTranslations;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $customerCategoryPricesScheduledForDeletion = null;
-
-    /**
-     * An array of objects scheduled for deletion.
-     * @var ObjectCollection
-     */
-    protected $customerCategoryOrdersScheduledForDeletion = null;
 
     /**
      * An array of objects scheduled for deletion.
@@ -711,10 +683,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->collCustomerCategoryPrices = null;
-
-            $this->collCustomerCategoryOrders = null;
-
             $this->collCustomerCategoryI18ns = null;
 
         } // if (deep)
@@ -848,40 +816,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
                 }
                 $affectedRows += 1;
                 $this->resetModified();
-            }
-
-            if ($this->customerCategoryPricesScheduledForDeletion !== null) {
-                if (!$this->customerCategoryPricesScheduledForDeletion->isEmpty()) {
-                    \CustomerCategory\Model\CustomerCategoryPriceQuery::create()
-                        ->filterByPrimaryKeys($this->customerCategoryPricesScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->customerCategoryPricesScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collCustomerCategoryPrices !== null) {
-            foreach ($this->collCustomerCategoryPrices as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
-            }
-
-            if ($this->customerCategoryOrdersScheduledForDeletion !== null) {
-                if (!$this->customerCategoryOrdersScheduledForDeletion->isEmpty()) {
-                    \CustomerCategory\Model\CustomerCategoryOrderQuery::create()
-                        ->filterByPrimaryKeys($this->customerCategoryOrdersScheduledForDeletion->getPrimaryKeys(false))
-                        ->delete($con);
-                    $this->customerCategoryOrdersScheduledForDeletion = null;
-                }
-            }
-
-                if ($this->collCustomerCategoryOrders !== null) {
-            foreach ($this->collCustomerCategoryOrders as $referrerFK) {
-                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
-                        $affectedRows += $referrerFK->save($con);
-                    }
-                }
             }
 
             if ($this->customerCategoryI18nsScheduledForDeletion !== null) {
@@ -1086,12 +1020,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->collCustomerCategoryPrices) {
-                $result['CustomerCategoryPrices'] = $this->collCustomerCategoryPrices->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
-            if (null !== $this->collCustomerCategoryOrders) {
-                $result['CustomerCategoryOrders'] = $this->collCustomerCategoryOrders->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
-            }
             if (null !== $this->collCustomerCategoryI18ns) {
                 $result['CustomerCategoryI18ns'] = $this->collCustomerCategoryI18ns->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
@@ -1262,18 +1190,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
             // the getter/setter methods for fkey referrer objects.
             $copyObj->setNew(false);
 
-            foreach ($this->getCustomerCategoryPrices() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCustomerCategoryPrice($relObj->copy($deepCopy));
-                }
-            }
-
-            foreach ($this->getCustomerCategoryOrders() as $relObj) {
-                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
-                    $copyObj->addCustomerCategoryOrder($relObj->copy($deepCopy));
-                }
-            }
-
             foreach ($this->getCustomerCategoryI18ns() as $relObj) {
                 if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
                     $copyObj->addCustomerCategoryI18n($relObj->copy($deepCopy));
@@ -1321,479 +1237,9 @@ abstract class CustomerCategory implements ActiveRecordInterface
      */
     public function initRelation($relationName)
     {
-        if ('CustomerCategoryPrice' == $relationName) {
-            return $this->initCustomerCategoryPrices();
-        }
-        if ('CustomerCategoryOrder' == $relationName) {
-            return $this->initCustomerCategoryOrders();
-        }
         if ('CustomerCategoryI18n' == $relationName) {
             return $this->initCustomerCategoryI18ns();
         }
-    }
-
-    /**
-     * Clears out the collCustomerCategoryPrices collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addCustomerCategoryPrices()
-     */
-    public function clearCustomerCategoryPrices()
-    {
-        $this->collCustomerCategoryPrices = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collCustomerCategoryPrices collection loaded partially.
-     */
-    public function resetPartialCustomerCategoryPrices($v = true)
-    {
-        $this->collCustomerCategoryPricesPartial = $v;
-    }
-
-    /**
-     * Initializes the collCustomerCategoryPrices collection.
-     *
-     * By default this just sets the collCustomerCategoryPrices collection to an empty array (like clearcollCustomerCategoryPrices());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initCustomerCategoryPrices($overrideExisting = true)
-    {
-        if (null !== $this->collCustomerCategoryPrices && !$overrideExisting) {
-            return;
-        }
-        $this->collCustomerCategoryPrices = new ObjectCollection();
-        $this->collCustomerCategoryPrices->setModel('\CustomerCategory\Model\CustomerCategoryPrice');
-    }
-
-    /**
-     * Gets an array of ChildCustomerCategoryPrice objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildCustomerCategory is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildCustomerCategoryPrice[] List of ChildCustomerCategoryPrice objects
-     * @throws PropelException
-     */
-    public function getCustomerCategoryPrices($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomerCategoryPricesPartial && !$this->isNew();
-        if (null === $this->collCustomerCategoryPrices || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCustomerCategoryPrices) {
-                // return empty collection
-                $this->initCustomerCategoryPrices();
-            } else {
-                $collCustomerCategoryPrices = ChildCustomerCategoryPriceQuery::create(null, $criteria)
-                    ->filterByCustomerCategory($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collCustomerCategoryPricesPartial && count($collCustomerCategoryPrices)) {
-                        $this->initCustomerCategoryPrices(false);
-
-                        foreach ($collCustomerCategoryPrices as $obj) {
-                            if (false == $this->collCustomerCategoryPrices->contains($obj)) {
-                                $this->collCustomerCategoryPrices->append($obj);
-                            }
-                        }
-
-                        $this->collCustomerCategoryPricesPartial = true;
-                    }
-
-                    reset($collCustomerCategoryPrices);
-
-                    return $collCustomerCategoryPrices;
-                }
-
-                if ($partial && $this->collCustomerCategoryPrices) {
-                    foreach ($this->collCustomerCategoryPrices as $obj) {
-                        if ($obj->isNew()) {
-                            $collCustomerCategoryPrices[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collCustomerCategoryPrices = $collCustomerCategoryPrices;
-                $this->collCustomerCategoryPricesPartial = false;
-            }
-        }
-
-        return $this->collCustomerCategoryPrices;
-    }
-
-    /**
-     * Sets a collection of CustomerCategoryPrice objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $customerCategoryPrices A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildCustomerCategory The current object (for fluent API support)
-     */
-    public function setCustomerCategoryPrices(Collection $customerCategoryPrices, ConnectionInterface $con = null)
-    {
-        $customerCategoryPricesToDelete = $this->getCustomerCategoryPrices(new Criteria(), $con)->diff($customerCategoryPrices);
-
-
-        //since at least one column in the foreign key is at the same time a PK
-        //we can not just set a PK to NULL in the lines below. We have to store
-        //a backup of all values, so we are able to manipulate these items based on the onDelete value later.
-        $this->customerCategoryPricesScheduledForDeletion = clone $customerCategoryPricesToDelete;
-
-        foreach ($customerCategoryPricesToDelete as $customerCategoryPriceRemoved) {
-            $customerCategoryPriceRemoved->setCustomerCategory(null);
-        }
-
-        $this->collCustomerCategoryPrices = null;
-        foreach ($customerCategoryPrices as $customerCategoryPrice) {
-            $this->addCustomerCategoryPrice($customerCategoryPrice);
-        }
-
-        $this->collCustomerCategoryPrices = $customerCategoryPrices;
-        $this->collCustomerCategoryPricesPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related CustomerCategoryPrice objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related CustomerCategoryPrice objects.
-     * @throws PropelException
-     */
-    public function countCustomerCategoryPrices(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomerCategoryPricesPartial && !$this->isNew();
-        if (null === $this->collCustomerCategoryPrices || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCustomerCategoryPrices) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getCustomerCategoryPrices());
-            }
-
-            $query = ChildCustomerCategoryPriceQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByCustomerCategory($this)
-                ->count($con);
-        }
-
-        return count($this->collCustomerCategoryPrices);
-    }
-
-    /**
-     * Method called to associate a ChildCustomerCategoryPrice object to this object
-     * through the ChildCustomerCategoryPrice foreign key attribute.
-     *
-     * @param    ChildCustomerCategoryPrice $l ChildCustomerCategoryPrice
-     * @return   \CustomerCategory\Model\CustomerCategory The current object (for fluent API support)
-     */
-    public function addCustomerCategoryPrice(ChildCustomerCategoryPrice $l)
-    {
-        if ($this->collCustomerCategoryPrices === null) {
-            $this->initCustomerCategoryPrices();
-            $this->collCustomerCategoryPricesPartial = true;
-        }
-
-        if (!in_array($l, $this->collCustomerCategoryPrices->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddCustomerCategoryPrice($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param CustomerCategoryPrice $customerCategoryPrice The customerCategoryPrice object to add.
-     */
-    protected function doAddCustomerCategoryPrice($customerCategoryPrice)
-    {
-        $this->collCustomerCategoryPrices[]= $customerCategoryPrice;
-        $customerCategoryPrice->setCustomerCategory($this);
-    }
-
-    /**
-     * @param  CustomerCategoryPrice $customerCategoryPrice The customerCategoryPrice object to remove.
-     * @return ChildCustomerCategory The current object (for fluent API support)
-     */
-    public function removeCustomerCategoryPrice($customerCategoryPrice)
-    {
-        if ($this->getCustomerCategoryPrices()->contains($customerCategoryPrice)) {
-            $this->collCustomerCategoryPrices->remove($this->collCustomerCategoryPrices->search($customerCategoryPrice));
-            if (null === $this->customerCategoryPricesScheduledForDeletion) {
-                $this->customerCategoryPricesScheduledForDeletion = clone $this->collCustomerCategoryPrices;
-                $this->customerCategoryPricesScheduledForDeletion->clear();
-            }
-            $this->customerCategoryPricesScheduledForDeletion[]= clone $customerCategoryPrice;
-            $customerCategoryPrice->setCustomerCategory(null);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Clears out the collCustomerCategoryOrders collection
-     *
-     * This does not modify the database; however, it will remove any associated objects, causing
-     * them to be refetched by subsequent calls to accessor method.
-     *
-     * @return void
-     * @see        addCustomerCategoryOrders()
-     */
-    public function clearCustomerCategoryOrders()
-    {
-        $this->collCustomerCategoryOrders = null; // important to set this to NULL since that means it is uninitialized
-    }
-
-    /**
-     * Reset is the collCustomerCategoryOrders collection loaded partially.
-     */
-    public function resetPartialCustomerCategoryOrders($v = true)
-    {
-        $this->collCustomerCategoryOrdersPartial = $v;
-    }
-
-    /**
-     * Initializes the collCustomerCategoryOrders collection.
-     *
-     * By default this just sets the collCustomerCategoryOrders collection to an empty array (like clearcollCustomerCategoryOrders());
-     * however, you may wish to override this method in your stub class to provide setting appropriate
-     * to your application -- for example, setting the initial array to the values stored in database.
-     *
-     * @param      boolean $overrideExisting If set to true, the method call initializes
-     *                                        the collection even if it is not empty
-     *
-     * @return void
-     */
-    public function initCustomerCategoryOrders($overrideExisting = true)
-    {
-        if (null !== $this->collCustomerCategoryOrders && !$overrideExisting) {
-            return;
-        }
-        $this->collCustomerCategoryOrders = new ObjectCollection();
-        $this->collCustomerCategoryOrders->setModel('\CustomerCategory\Model\CustomerCategoryOrder');
-    }
-
-    /**
-     * Gets an array of ChildCustomerCategoryOrder objects which contain a foreign key that references this object.
-     *
-     * If the $criteria is not null, it is used to always fetch the results from the database.
-     * Otherwise the results are fetched from the database the first time, then cached.
-     * Next time the same method is called without $criteria, the cached collection is returned.
-     * If this ChildCustomerCategory is new, it will return
-     * an empty collection or the current collection; the criteria is ignored on a new object.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @return Collection|ChildCustomerCategoryOrder[] List of ChildCustomerCategoryOrder objects
-     * @throws PropelException
-     */
-    public function getCustomerCategoryOrders($criteria = null, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomerCategoryOrdersPartial && !$this->isNew();
-        if (null === $this->collCustomerCategoryOrders || null !== $criteria  || $partial) {
-            if ($this->isNew() && null === $this->collCustomerCategoryOrders) {
-                // return empty collection
-                $this->initCustomerCategoryOrders();
-            } else {
-                $collCustomerCategoryOrders = ChildCustomerCategoryOrderQuery::create(null, $criteria)
-                    ->filterByCustomerCategory($this)
-                    ->find($con);
-
-                if (null !== $criteria) {
-                    if (false !== $this->collCustomerCategoryOrdersPartial && count($collCustomerCategoryOrders)) {
-                        $this->initCustomerCategoryOrders(false);
-
-                        foreach ($collCustomerCategoryOrders as $obj) {
-                            if (false == $this->collCustomerCategoryOrders->contains($obj)) {
-                                $this->collCustomerCategoryOrders->append($obj);
-                            }
-                        }
-
-                        $this->collCustomerCategoryOrdersPartial = true;
-                    }
-
-                    reset($collCustomerCategoryOrders);
-
-                    return $collCustomerCategoryOrders;
-                }
-
-                if ($partial && $this->collCustomerCategoryOrders) {
-                    foreach ($this->collCustomerCategoryOrders as $obj) {
-                        if ($obj->isNew()) {
-                            $collCustomerCategoryOrders[] = $obj;
-                        }
-                    }
-                }
-
-                $this->collCustomerCategoryOrders = $collCustomerCategoryOrders;
-                $this->collCustomerCategoryOrdersPartial = false;
-            }
-        }
-
-        return $this->collCustomerCategoryOrders;
-    }
-
-    /**
-     * Sets a collection of CustomerCategoryOrder objects related by a one-to-many relationship
-     * to the current object.
-     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
-     * and new objects from the given Propel collection.
-     *
-     * @param      Collection $customerCategoryOrders A Propel collection.
-     * @param      ConnectionInterface $con Optional connection object
-     * @return   ChildCustomerCategory The current object (for fluent API support)
-     */
-    public function setCustomerCategoryOrders(Collection $customerCategoryOrders, ConnectionInterface $con = null)
-    {
-        $customerCategoryOrdersToDelete = $this->getCustomerCategoryOrders(new Criteria(), $con)->diff($customerCategoryOrders);
-
-
-        $this->customerCategoryOrdersScheduledForDeletion = $customerCategoryOrdersToDelete;
-
-        foreach ($customerCategoryOrdersToDelete as $customerCategoryOrderRemoved) {
-            $customerCategoryOrderRemoved->setCustomerCategory(null);
-        }
-
-        $this->collCustomerCategoryOrders = null;
-        foreach ($customerCategoryOrders as $customerCategoryOrder) {
-            $this->addCustomerCategoryOrder($customerCategoryOrder);
-        }
-
-        $this->collCustomerCategoryOrders = $customerCategoryOrders;
-        $this->collCustomerCategoryOrdersPartial = false;
-
-        return $this;
-    }
-
-    /**
-     * Returns the number of related CustomerCategoryOrder objects.
-     *
-     * @param      Criteria $criteria
-     * @param      boolean $distinct
-     * @param      ConnectionInterface $con
-     * @return int             Count of related CustomerCategoryOrder objects.
-     * @throws PropelException
-     */
-    public function countCustomerCategoryOrders(Criteria $criteria = null, $distinct = false, ConnectionInterface $con = null)
-    {
-        $partial = $this->collCustomerCategoryOrdersPartial && !$this->isNew();
-        if (null === $this->collCustomerCategoryOrders || null !== $criteria || $partial) {
-            if ($this->isNew() && null === $this->collCustomerCategoryOrders) {
-                return 0;
-            }
-
-            if ($partial && !$criteria) {
-                return count($this->getCustomerCategoryOrders());
-            }
-
-            $query = ChildCustomerCategoryOrderQuery::create(null, $criteria);
-            if ($distinct) {
-                $query->distinct();
-            }
-
-            return $query
-                ->filterByCustomerCategory($this)
-                ->count($con);
-        }
-
-        return count($this->collCustomerCategoryOrders);
-    }
-
-    /**
-     * Method called to associate a ChildCustomerCategoryOrder object to this object
-     * through the ChildCustomerCategoryOrder foreign key attribute.
-     *
-     * @param    ChildCustomerCategoryOrder $l ChildCustomerCategoryOrder
-     * @return   \CustomerCategory\Model\CustomerCategory The current object (for fluent API support)
-     */
-    public function addCustomerCategoryOrder(ChildCustomerCategoryOrder $l)
-    {
-        if ($this->collCustomerCategoryOrders === null) {
-            $this->initCustomerCategoryOrders();
-            $this->collCustomerCategoryOrdersPartial = true;
-        }
-
-        if (!in_array($l, $this->collCustomerCategoryOrders->getArrayCopy(), true)) { // only add it if the **same** object is not already associated
-            $this->doAddCustomerCategoryOrder($l);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param CustomerCategoryOrder $customerCategoryOrder The customerCategoryOrder object to add.
-     */
-    protected function doAddCustomerCategoryOrder($customerCategoryOrder)
-    {
-        $this->collCustomerCategoryOrders[]= $customerCategoryOrder;
-        $customerCategoryOrder->setCustomerCategory($this);
-    }
-
-    /**
-     * @param  CustomerCategoryOrder $customerCategoryOrder The customerCategoryOrder object to remove.
-     * @return ChildCustomerCategory The current object (for fluent API support)
-     */
-    public function removeCustomerCategoryOrder($customerCategoryOrder)
-    {
-        if ($this->getCustomerCategoryOrders()->contains($customerCategoryOrder)) {
-            $this->collCustomerCategoryOrders->remove($this->collCustomerCategoryOrders->search($customerCategoryOrder));
-            if (null === $this->customerCategoryOrdersScheduledForDeletion) {
-                $this->customerCategoryOrdersScheduledForDeletion = clone $this->collCustomerCategoryOrders;
-                $this->customerCategoryOrdersScheduledForDeletion->clear();
-            }
-            $this->customerCategoryOrdersScheduledForDeletion[]= clone $customerCategoryOrder;
-            $customerCategoryOrder->setCustomerCategory(null);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * If this collection has already been initialized with
-     * an identical criteria, it returns the collection.
-     * Otherwise if this CustomerCategory is new, it will return
-     * an empty collection; or if this CustomerCategory has previously
-     * been saved, it will retrieve related CustomerCategoryOrders from storage.
-     *
-     * This method is protected by default in order to keep the public
-     * api reasonable.  You can provide public methods for those you
-     * actually need in CustomerCategory.
-     *
-     * @param      Criteria $criteria optional Criteria object to narrow the query
-     * @param      ConnectionInterface $con optional connection object
-     * @param      string $joinBehavior optional join type to use (defaults to Criteria::LEFT_JOIN)
-     * @return Collection|ChildCustomerCategoryOrder[] List of ChildCustomerCategoryOrder objects
-     */
-    public function getCustomerCategoryOrdersJoinOrder($criteria = null, $con = null, $joinBehavior = Criteria::LEFT_JOIN)
-    {
-        $query = ChildCustomerCategoryOrderQuery::create(null, $criteria);
-        $query->joinWith('Order', $joinBehavior);
-
-        return $this->getCustomerCategoryOrders($query, $con);
     }
 
     /**
@@ -2050,16 +1496,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
     public function clearAllReferences($deep = false)
     {
         if ($deep) {
-            if ($this->collCustomerCategoryPrices) {
-                foreach ($this->collCustomerCategoryPrices as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
-            if ($this->collCustomerCategoryOrders) {
-                foreach ($this->collCustomerCategoryOrders as $o) {
-                    $o->clearAllReferences($deep);
-                }
-            }
             if ($this->collCustomerCategoryI18ns) {
                 foreach ($this->collCustomerCategoryI18ns as $o) {
                     $o->clearAllReferences($deep);
@@ -2071,8 +1507,6 @@ abstract class CustomerCategory implements ActiveRecordInterface
         $this->currentLocale = 'en_US';
         $this->currentTranslations = null;
 
-        $this->collCustomerCategoryPrices = null;
-        $this->collCustomerCategoryOrders = null;
         $this->collCustomerCategoryI18ns = null;
     }
 

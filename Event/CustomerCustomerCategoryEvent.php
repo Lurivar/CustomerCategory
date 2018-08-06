@@ -27,12 +27,6 @@ class CustomerCustomerCategoryEvent extends ActionEvent
     /** @var array */
     protected $customerCategoryId;
 
-    /** @var string */
-    protected $siret;
-
-    /** @var string */
-    protected $vat;
-
     /**
      * @param int $customerId
      */
@@ -81,43 +75,4 @@ class CustomerCustomerCategoryEvent extends ActionEvent
         return $this->customerId;
     }
 
-    /**
-     * @param mixed $siret
-     *
-     * @return CustomerCustomerCategory
-     */
-    public function setSiret($siret)
-    {
-        $this->siret = $siret;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSiret()
-    {
-        return $this->siret;
-    }
-
-    /**
-     * @param mixed $vat
-     *
-     * @return CustomerCustomerCategory
-     */
-    public function setVat($vat)
-    {
-        $this->vat = $vat;
-
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getVat()
-    {
-        return $this->vat;
-    }
 }

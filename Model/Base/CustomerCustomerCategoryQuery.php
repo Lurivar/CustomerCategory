@@ -24,13 +24,9 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCustomerCustomerCategoryQuery orderByCustomerId($order = Criteria::ASC) Order by the customer_id column
  * @method     ChildCustomerCustomerCategoryQuery orderByCustomerCategoryId($order = Criteria::ASC) Order by the customer_category_id column
- * @method     ChildCustomerCustomerCategoryQuery orderBySiret($order = Criteria::ASC) Order by the siret column
- * @method     ChildCustomerCustomerCategoryQuery orderByVat($order = Criteria::ASC) Order by the vat column
  *
  * @method     ChildCustomerCustomerCategoryQuery groupByCustomerId() Group by the customer_id column
  * @method     ChildCustomerCustomerCategoryQuery groupByCustomerCategoryId() Group by the customer_category_id column
- * @method     ChildCustomerCustomerCategoryQuery groupBySiret() Group by the siret column
- * @method     ChildCustomerCustomerCategoryQuery groupByVat() Group by the vat column
  *
  * @method     ChildCustomerCustomerCategoryQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     ChildCustomerCustomerCategoryQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -45,13 +41,9 @@ use Propel\Runtime\Exception\PropelException;
  *
  * @method     ChildCustomerCustomerCategory findOneByCustomerId(int $customer_id) Return the first ChildCustomerCustomerCategory filtered by the customer_id column
  * @method     ChildCustomerCustomerCategory findOneByCustomerCategoryId(string $customer_category_id) Return the first ChildCustomerCustomerCategory filtered by the customer_category_id column
- * @method     ChildCustomerCustomerCategory findOneBySiret(string $siret) Return the first ChildCustomerCustomerCategory filtered by the siret column
- * @method     ChildCustomerCustomerCategory findOneByVat(string $vat) Return the first ChildCustomerCustomerCategory filtered by the vat column
  *
  * @method     array findByCustomerId(int $customer_id) Return ChildCustomerCustomerCategory objects filtered by the customer_id column
  * @method     array findByCustomerCategoryId(string $customer_category_id) Return ChildCustomerCustomerCategory objects filtered by the customer_category_id column
- * @method     array findBySiret(string $siret) Return ChildCustomerCustomerCategory objects filtered by the siret column
- * @method     array findByVat(string $vat) Return ChildCustomerCustomerCategory objects filtered by the vat column
  *
  */
 abstract class CustomerCustomerCategoryQuery extends ModelCriteria
@@ -140,7 +132,7 @@ abstract class CustomerCustomerCategoryQuery extends ModelCriteria
      */
     protected function findPkSimple($key, $con)
     {
-        $sql = 'SELECT CUSTOMER_ID, CUSTOMER_CATEGORY_ID, SIRET, VAT FROM customer_customer_category WHERE CUSTOMER_ID = :p0';
+        $sql = 'SELECT CUSTOMER_ID, CUSTOMER_CATEGORY_ID FROM customer_customer_category WHERE CUSTOMER_ID = :p0';
         try {
             $stmt = $con->prepare($sql);
             $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
@@ -299,64 +291,6 @@ abstract class CustomerCustomerCategoryQuery extends ModelCriteria
         }
 
         return $this->addUsingAlias(CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID, $customerCategoryId, $comparison);
-    }
-
-    /**
-     * Filter the query on the siret column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterBySiret('fooValue');   // WHERE siret = 'fooValue'
-     * $query->filterBySiret('%fooValue%'); // WHERE siret LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $siret The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildCustomerCustomerCategoryQuery The current query, for fluid interface
-     */
-    public function filterBySiret($siret = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($siret)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $siret)) {
-                $siret = str_replace('*', '%', $siret);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(CustomerCustomerCategoryTableMap::SIRET, $siret, $comparison);
-    }
-
-    /**
-     * Filter the query on the vat column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByVat('fooValue');   // WHERE vat = 'fooValue'
-     * $query->filterByVat('%fooValue%'); // WHERE vat LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $vat The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return ChildCustomerCustomerCategoryQuery The current query, for fluid interface
-     */
-    public function filterByVat($vat = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($vat)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $vat)) {
-                $vat = str_replace('*', '%', $vat);
-                $comparison = Criteria::LIKE;
-            }
-        }
-
-        return $this->addUsingAlias(CustomerCustomerCategoryTableMap::VAT, $vat, $comparison);
     }
 
     /**

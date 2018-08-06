@@ -88,8 +88,6 @@ class CustomerCustomerCategoryLoop extends BaseLoop implements PropelSearchLoopI
             $loopResultRow
                 ->set("CUSTOMER_CATEGORY_ID", $customerCustomerCategory->getCustomerCategoryId())
                 ->set("CUSTOMER_ID", $customerCustomerCategory->getCustomerId())
-                ->set("SIRET", $customerCustomerCategory->getSiret())
-                ->set("VAT", $customerCustomerCategory->getVat())
             ;
 
             $loopResult->addRow($loopResultRow);

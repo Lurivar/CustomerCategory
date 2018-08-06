@@ -32,29 +32,6 @@ class CustomerCustomerCategoryForm extends BaseForm
         return 'customer_customer_category_form';
     }
 
-    /**
-     * Validate a field only if customer category is professional
-     *
-     * @param string                    $value
-     * @param ExecutionContextInterface $context
-     */
-    public function checkProfessionalInformation($value, ExecutionContextInterface $context)
-    {
-        $customerCategory = CustomerCategory::getCustomerCategoryByCode(CustomerCategory::CUSTOMER_CATEGORY_PROFESSIONAL);
-
-        if (null != $form = $this->getRequest()->request->get("customer_customer_category_form")) {
-            if (array_key_exists("customer_category_id", $form) &&
-                $form["customer_category_id"] == $customerCategory->getId()) {
-                if (strlen($value) <= 1) {
-                    $context->addViolation(Translator::getInstance()->trans(
-                        "This field can't be empty",
-                        array(),
-                        CustomerCategory::MESSAGE_DOMAIN
-                    ));
-                }
-            }
-        }
-    }
 
     protected function buildForm()
     {
@@ -85,50 +62,6 @@ class CustomerCustomerCategoryForm extends BaseForm
                         'for' => 'customer_id'
                     )
                 ))
-            ->add(
-                'siret',
-                'text',
-                array(
-                    /*
-                    'constraints' => array(
-                        new Constraints\Callback(array("methods" => array(
-                            array($this, "checkProfessionalInformation")
-                        )))
-                    ),*/
-                    'required' => false,
-                    'empty_data' => false,
-                    'label' => Translator::getInstance()->trans(
-                        'Siret number',
-                        array(),
-                        CustomerCategory::MESSAGE_DOMAIN
-                    ),
-                    'label_attr' => array(
-                        'for' => 'siret'
-                    )
-                )
-            )
-            ->add(
-                'vat',
-                'text',
-                array(
-                    /*
-                    'constraints' => array(
-                        new Constraints\Callback(array("methods" => array(
-                            array($this, "checkProfessionalInformation")
-                        )))
-                    ),*/
-                    'required' => false,
-                    'empty_data' => false,
-                    'label' => Translator::getInstance()->trans(
-                        'Vat',
-                        array(),
-                        CustomerCategory::MESSAGE_DOMAIN
-                    ),
-                    'label_attr' => array(
-                        'for' => 'vat'
-                    )
-                )
-            )
         ;
     }
 }

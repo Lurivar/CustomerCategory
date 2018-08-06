@@ -316,8 +316,6 @@ class CustomerCategoryAdminController extends BaseAdminController
             $event = new CustomerCustomerCategoryEvent($formValidate->get('customer_id')->getData());
             $event
                 ->setCustomerCategoryId($formValidate->get('customer_category_id')->getData())
-                ->setSiret($formValidate->get('siret')->getData())
-                ->setVat($formValidate->get('vat')->getData())
             ;
 
             $this->dispatch(CustomerCategoryEvents::CUSTOMER_CUSTOMER_CATEGORY_UPDATE, $event);

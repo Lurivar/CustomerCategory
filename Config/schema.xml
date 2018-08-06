@@ -18,59 +18,12 @@
 	<table name="customer_customer_category">
 		<column name="customer_id" primaryKey="true" required="true" type="INTEGER" />
 		<column name="customer_category_id" required="true" size="255" type="VARCHAR"/>
-		<column name="siret" size="50" type="VARCHAR" />
-		<column name="vat" size="50" type="VARCHAR" />
 		<foreign-key foreignTable="customer" onDelete="CASCADE">
 			<reference local="customer_id" foreign="id" />
 		</foreign-key>
 		<index name="idx_customer_customer_category_customer_category_id">
 			<index-column name="customer_category_id" />
 		</index>
-	</table>
-
-	<table name="customer_category_price">
-		<column name="customer_category_id" primaryKey="true" required="true" type="INTEGER" />
-		<foreign-key foreignTable="customer_category" name="fk_customer_category_id" onDelete="CASCADE" onUpdate="RESTRICT">
-			<reference foreign="id" local="customer_category_id" />
-		</foreign-key>
-		<column name="promo" primaryKey="true" type="TINYINT" required="true" defaultValue="0"/>
-		<column name="use_equation" type="TINYINT" required="true" defaultValue="0"/>
-		<column name="amount_added_before" type="DECIMAL" size="16" scale="6" defaultValue="0" />
-		<column name="amount_added_after" type="DECIMAL" size="16" scale="6" defaultValue="0" />
-		<column name="multiplication_coefficient" type="DECIMAL" size="16" scale="6" defaultValue="1" />
-		<column name="is_taxed" type="TINYINT" required="true" defaultValue="1"/>
-	</table>
-
-	<table name="product_purchase_price">
-		<column name="product_sale_elements_id" primaryKey="true" required="true" type="INTEGER" />
-		<foreign-key foreignTable="product_sale_elements" name="fk_product_sale_elements_id" onDelete="CASCADE" onUpdate="RESTRICT">
-			<reference foreign="id" local="product_sale_elements_id" />
-		</foreign-key>
-		<column name="currency_id" primaryKey="true" required="true" type="INTEGER" />
-		<foreign-key foreignTable="currency" name="fk_currency_id" onDelete="CASCADE" onUpdate="RESTRICT">
-			<reference foreign="id" local="currency_id" />
-		</foreign-key>
-		<column name="purchase_price" type="DECIMAL" size="16" scale="6" defaultValue="0"/>
-	</table>
-
-	<table name="order_product_purchase_price">
-		<column name="order_product_id" primaryKey="true" required="true" type="INTEGER" />
-		<foreign-key foreignTable="order_product" name="fk_order_product_id" onDelete="CASCADE" onUpdate="RESTRICT">
-			<reference foreign="id" local="order_product_id" />
-		</foreign-key>
-		<column name="purchase_price" type="DECIMAL" size="16" scale="6" defaultValue="0"/>
-		<column name="sale_day_equation" type="LONGVARCHAR" required="true"/>
-	</table>
-
-	<table name="customer_category_order">
-        <column name="order_id" primaryKey="true" required="true" type="INTEGER"/>
-        <foreign-key foreignTable="order" name="fk_customer_category_order_customer_category_order_id" onDelete="CASCADE">
-            <reference foreign="id" local="order_id" />
-        </foreign-key>
-        <column name="customer_category_id" required="true" type="INTEGER"/>
-        <foreign-key foreignTable="customer_category" name="fk_customer_category_order_customer_category_id" onDelete="NONE" onUpdate="CASCADE">
-            <reference foreign="id" local="customer_category_id" />
-        </foreign-key>
 	</table>
 
 	<external-schema filename="local/config/schema.xml" referenceOnly="true" />

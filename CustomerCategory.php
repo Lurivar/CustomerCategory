@@ -39,7 +39,8 @@ class CustomerCategory extends BaseModule
     const CUSTOMER_CATEGORY_PROFESSIONAL = "professional";
 
     /**
-     * @param ConnectionInterface $con
+     * @param ConnectionInterface|null $con
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public function postActivation(ConnectionInterface $con = null)
     {
@@ -67,6 +68,11 @@ class CustomerCategory extends BaseModule
         }
     }
 
+    /**
+     * @param $currentVersion
+     * @param $newVersion
+     * @param ConnectionInterface|null $con
+     */
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
     {
         $finder = Finder::create()
@@ -89,8 +95,8 @@ class CustomerCategory extends BaseModule
      * @param $code
      * @param null $title
      * @param string $locale
-     *
-     * @return Model\CustomerCategory
+     * @return CustomerCategoryModel
+     * @throws \Propel\Runtime\Exception\PropelException
      */
     public static function getCustomerCategoryByCode($code, $title = null, $locale = "fr_FR")
     {

@@ -2,17 +2,17 @@
 <module>
     <fullnamespace>CustomerCategory\CustomerCategory</fullnamespace>
     <descriptive locale="en_US">
-        <title>Customer Category and Purchase Price</title>
+        <title>Customer Categories</title>
     </descriptive>
     <descriptive locale="fr_FR">
-        <title>Catégorie de clients et prix d'achat</title>
+        <title>Catégorie de clients</title>
     </descriptive>
-    <version>1.4.0</version>
+    <version>1.0.0</version>
     <author>
-        <name>Guillaume Barral / Etienne Perriere</name>
-        <email>gbarral@openstudio.fr / eperriere@openstudio.fr</email>
+        <name>Luc Normandon</name>
+        <email>lucnormandon@openstudio.fr</email>
     </author>
     <type>classic</type>
-    <thelia>2.3.0</thelia>
+    <thelia>2.3.4</thelia>
     <stability>prod</stability>
 </module>

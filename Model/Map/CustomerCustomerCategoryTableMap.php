@@ -58,7 +58,7 @@ class CustomerCustomerCategoryTableMap extends TableMap
     /**
      * The total number of columns
      */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 2;
 
     /**
      * The number of lazy-loaded columns
@@ -68,7 +68,7 @@ class CustomerCustomerCategoryTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    const NUM_HYDRATE_COLUMNS = 4;
+    const NUM_HYDRATE_COLUMNS = 2;
 
     /**
      * the column name for the CUSTOMER_ID field
@@ -79,16 +79,6 @@ class CustomerCustomerCategoryTableMap extends TableMap
      * the column name for the CUSTOMER_CATEGORY_ID field
      */
     const CUSTOMER_CATEGORY_ID = 'customer_customer_category.CUSTOMER_CATEGORY_ID';
-
-    /**
-     * the column name for the SIRET field
-     */
-    const SIRET = 'customer_customer_category.SIRET';
-
-    /**
-     * the column name for the VAT field
-     */
-    const VAT = 'customer_customer_category.VAT';
 
     /**
      * The default string format for model objects of the related table
@@ -102,12 +92,12 @@ class CustomerCustomerCategoryTableMap extends TableMap
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     protected static $fieldNames = array (
-        self::TYPE_PHPNAME       => array('CustomerId', 'CustomerCategoryId', 'Siret', 'Vat', ),
-        self::TYPE_STUDLYPHPNAME => array('customerId', 'customerCategoryId', 'siret', 'vat', ),
-        self::TYPE_COLNAME       => array(CustomerCustomerCategoryTableMap::CUSTOMER_ID, CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID, CustomerCustomerCategoryTableMap::SIRET, CustomerCustomerCategoryTableMap::VAT, ),
-        self::TYPE_RAW_COLNAME   => array('CUSTOMER_ID', 'CUSTOMER_CATEGORY_ID', 'SIRET', 'VAT', ),
-        self::TYPE_FIELDNAME     => array('customer_id', 'customer_category_id', 'siret', 'vat', ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('CustomerId', 'CustomerCategoryId', ),
+        self::TYPE_STUDLYPHPNAME => array('customerId', 'customerCategoryId', ),
+        self::TYPE_COLNAME       => array(CustomerCustomerCategoryTableMap::CUSTOMER_ID, CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID, ),
+        self::TYPE_RAW_COLNAME   => array('CUSTOMER_ID', 'CUSTOMER_CATEGORY_ID', ),
+        self::TYPE_FIELDNAME     => array('customer_id', 'customer_category_id', ),
+        self::TYPE_NUM           => array(0, 1, )
     );
 
     /**
@@ -117,12 +107,12 @@ class CustomerCustomerCategoryTableMap extends TableMap
      * e.g. self::$fieldKeys[self::TYPE_PHPNAME]['Id'] = 0
      */
     protected static $fieldKeys = array (
-        self::TYPE_PHPNAME       => array('CustomerId' => 0, 'CustomerCategoryId' => 1, 'Siret' => 2, 'Vat' => 3, ),
-        self::TYPE_STUDLYPHPNAME => array('customerId' => 0, 'customerCategoryId' => 1, 'siret' => 2, 'vat' => 3, ),
-        self::TYPE_COLNAME       => array(CustomerCustomerCategoryTableMap::CUSTOMER_ID => 0, CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID => 1, CustomerCustomerCategoryTableMap::SIRET => 2, CustomerCustomerCategoryTableMap::VAT => 3, ),
-        self::TYPE_RAW_COLNAME   => array('CUSTOMER_ID' => 0, 'CUSTOMER_CATEGORY_ID' => 1, 'SIRET' => 2, 'VAT' => 3, ),
-        self::TYPE_FIELDNAME     => array('customer_id' => 0, 'customer_category_id' => 1, 'siret' => 2, 'vat' => 3, ),
-        self::TYPE_NUM           => array(0, 1, 2, 3, )
+        self::TYPE_PHPNAME       => array('CustomerId' => 0, 'CustomerCategoryId' => 1, ),
+        self::TYPE_STUDLYPHPNAME => array('customerId' => 0, 'customerCategoryId' => 1, ),
+        self::TYPE_COLNAME       => array(CustomerCustomerCategoryTableMap::CUSTOMER_ID => 0, CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID => 1, ),
+        self::TYPE_RAW_COLNAME   => array('CUSTOMER_ID' => 0, 'CUSTOMER_CATEGORY_ID' => 1, ),
+        self::TYPE_FIELDNAME     => array('customer_id' => 0, 'customer_category_id' => 1, ),
+        self::TYPE_NUM           => array(0, 1, )
     );
 
     /**
@@ -143,8 +133,6 @@ class CustomerCustomerCategoryTableMap extends TableMap
         // columns
         $this->addForeignPrimaryKey('CUSTOMER_ID', 'CustomerId', 'INTEGER' , 'customer', 'ID', true, null, null);
         $this->addColumn('CUSTOMER_CATEGORY_ID', 'CustomerCategoryId', 'VARCHAR', true, 255, null);
-        $this->addColumn('SIRET', 'Siret', 'VARCHAR', false, 50, null);
-        $this->addColumn('VAT', 'Vat', 'VARCHAR', false, 50, null);
     } // initialize()
 
     /**
@@ -295,13 +283,9 @@ class CustomerCustomerCategoryTableMap extends TableMap
         if (null === $alias) {
             $criteria->addSelectColumn(CustomerCustomerCategoryTableMap::CUSTOMER_ID);
             $criteria->addSelectColumn(CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID);
-            $criteria->addSelectColumn(CustomerCustomerCategoryTableMap::SIRET);
-            $criteria->addSelectColumn(CustomerCustomerCategoryTableMap::VAT);
         } else {
             $criteria->addSelectColumn($alias . '.CUSTOMER_ID');
             $criteria->addSelectColumn($alias . '.CUSTOMER_CATEGORY_ID');
-            $criteria->addSelectColumn($alias . '.SIRET');
-            $criteria->addSelectColumn($alias . '.VAT');
         }
     }
 

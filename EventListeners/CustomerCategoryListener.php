@@ -157,14 +157,10 @@ class CustomerCategoryListener implements EventSubscriberInterface
         $customerCategoryId = $customerCategory->getId();
 
         // Ignore SIRET and VAT if the customer is not professional
-        $siret = $customerCategory->getCode() == CustomerCategory::CUSTOMER_CATEGORY_PROFESSIONAL ? $form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_SIRET_FIELD_NAME] : '';
-        $vat = $customerCategory->getCode() == CustomerCategory::CUSTOMER_CATEGORY_PROFESSIONAL ? $form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_VAT_FIELD_NAME] : '';
 
         $updateEvent = new CustomerCustomerCategoryEvent($event->getCustomer()->getId());
         $updateEvent
             ->setCustomerCategoryId($customerCategoryId)
-            ->setSiret($siret)
-            ->setVat($vat)
         ;
 
         $dispatcher->dispatch(CustomerCategoryEvents::CUSTOMER_CUSTOMER_CATEGORY_UPDATE, $updateEvent);
@@ -184,23 +180,12 @@ class CustomerCategoryListener implements EventSubscriberInterface
             return;
         }
 
-        // Erase SIRET and VAT if the customer is now in the 'particular' customer category.
-        if ($form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_CODE_FIELD_NAME] == CustomerCategory::CUSTOMER_CATEGORY_PARTICULAR) {
-            $siret = '';
-            $vat = '';
-        } else {
-            $siret = $form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_SIRET_FIELD_NAME];
-            $vat = $form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_VAT_FIELD_NAME];
-        }
-
         $newCustomerCategory = CustomerCategoryQuery::create()->findOneByCode($form[CustomerCategoryFormListener::CUSTOMER_CATEGORY_CODE_FIELD_NAME]);
 
 
         $updateEvent = new CustomerCustomerCategoryEvent($event->getCustomer()->getId());
         $updateEvent
             ->setCustomerCategoryId($newCustomerCategory->getId())
-            ->setSiret($siret)
-            ->setVat($vat)
         ;
 
         $dispatcher->dispatch(CustomerCategoryEvents::CUSTOMER_CUSTOMER_CATEGORY_UPDATE, $updateEvent);
@@ -224,8 +209,6 @@ class CustomerCategoryListener implements EventSubscriberInterface
 
         $customerCustomerCategory
             ->setCustomerCategoryId($categoryIds)
-            ->setSiret($event->getSiret())
-            ->setVat($event->getVat())
             ->save()
         ;
     }

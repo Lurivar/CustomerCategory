@@ -66,18 +66,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
     protected $customer_category_id;
 
     /**
-     * The value for the siret field.
-     * @var        string
-     */
-    protected $siret;
-
-    /**
-     * The value for the vat field.
-     * @var        string
-     */
-    protected $vat;
-
-    /**
      * @var        Customer
      */
     protected $aCustomer;
@@ -371,28 +359,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
     }
 
     /**
-     * Get the [siret] column value.
-     *
-     * @return   string
-     */
-    public function getSiret()
-    {
-
-        return $this->siret;
-    }
-
-    /**
-     * Get the [vat] column value.
-     *
-     * @return   string
-     */
-    public function getVat()
-    {
-
-        return $this->vat;
-    }
-
-    /**
      * Set the value of [customer_id] column.
      *
      * @param      int $v new value
@@ -439,48 +405,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
     } // setCustomerCategoryId()
 
     /**
-     * Set the value of [siret] column.
-     *
-     * @param      string $v new value
-     * @return   \CustomerCategory\Model\CustomerCustomerCategory The current object (for fluent API support)
-     */
-    public function setSiret($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->siret !== $v) {
-            $this->siret = $v;
-            $this->modifiedColumns[CustomerCustomerCategoryTableMap::SIRET] = true;
-        }
-
-
-        return $this;
-    } // setSiret()
-
-    /**
-     * Set the value of [vat] column.
-     *
-     * @param      string $v new value
-     * @return   \CustomerCategory\Model\CustomerCustomerCategory The current object (for fluent API support)
-     */
-    public function setVat($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->vat !== $v) {
-            $this->vat = $v;
-            $this->modifiedColumns[CustomerCustomerCategoryTableMap::VAT] = true;
-        }
-
-
-        return $this;
-    } // setVat()
-
-    /**
      * Indicates whether the columns in this object are only set to default values.
      *
      * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -522,12 +446,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
 
             $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : CustomerCustomerCategoryTableMap::translateFieldName('CustomerCategoryId', TableMap::TYPE_PHPNAME, $indexType)];
             $this->customer_category_id = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : CustomerCustomerCategoryTableMap::translateFieldName('Siret', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->siret = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : CustomerCustomerCategoryTableMap::translateFieldName('Vat', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->vat = (null !== $col) ? (string) $col : null;
             $this->resetModified();
 
             $this->setNew(false);
@@ -536,7 +454,7 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = CustomerCustomerCategoryTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = CustomerCustomerCategoryTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
             throw new PropelException("Error populating \CustomerCategory\Model\CustomerCustomerCategory object", 0, $e);
@@ -763,12 +681,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
         if ($this->isColumnModified(CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID)) {
             $modifiedColumns[':p' . $index++]  = 'CUSTOMER_CATEGORY_ID';
         }
-        if ($this->isColumnModified(CustomerCustomerCategoryTableMap::SIRET)) {
-            $modifiedColumns[':p' . $index++]  = 'SIRET';
-        }
-        if ($this->isColumnModified(CustomerCustomerCategoryTableMap::VAT)) {
-            $modifiedColumns[':p' . $index++]  = 'VAT';
-        }
 
         $sql = sprintf(
             'INSERT INTO customer_customer_category (%s) VALUES (%s)',
@@ -785,12 +697,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
                         break;
                     case 'CUSTOMER_CATEGORY_ID':
                         $stmt->bindValue($identifier, $this->customer_category_id, PDO::PARAM_STR);
-                        break;
-                    case 'SIRET':
-                        $stmt->bindValue($identifier, $this->siret, PDO::PARAM_STR);
-                        break;
-                    case 'VAT':
-                        $stmt->bindValue($identifier, $this->vat, PDO::PARAM_STR);
                         break;
                 }
             }
@@ -853,12 +759,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
             case 1:
                 return $this->getCustomerCategoryId();
                 break;
-            case 2:
-                return $this->getSiret();
-                break;
-            case 3:
-                return $this->getVat();
-                break;
             default:
                 return null;
                 break;
@@ -890,8 +790,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
         $result = array(
             $keys[0] => $this->getCustomerId(),
             $keys[1] => $this->getCustomerCategoryId(),
-            $keys[2] => $this->getSiret(),
-            $keys[3] => $this->getVat(),
         );
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -942,12 +840,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
             case 1:
                 $this->setCustomerCategoryId($value);
                 break;
-            case 2:
-                $this->setSiret($value);
-                break;
-            case 3:
-                $this->setVat($value);
-                break;
         } // switch()
     }
 
@@ -974,8 +866,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
 
         if (array_key_exists($keys[0], $arr)) $this->setCustomerId($arr[$keys[0]]);
         if (array_key_exists($keys[1], $arr)) $this->setCustomerCategoryId($arr[$keys[1]]);
-        if (array_key_exists($keys[2], $arr)) $this->setSiret($arr[$keys[2]]);
-        if (array_key_exists($keys[3], $arr)) $this->setVat($arr[$keys[3]]);
     }
 
     /**
@@ -989,8 +879,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
 
         if ($this->isColumnModified(CustomerCustomerCategoryTableMap::CUSTOMER_ID)) $criteria->add(CustomerCustomerCategoryTableMap::CUSTOMER_ID, $this->customer_id);
         if ($this->isColumnModified(CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID)) $criteria->add(CustomerCustomerCategoryTableMap::CUSTOMER_CATEGORY_ID, $this->customer_category_id);
-        if ($this->isColumnModified(CustomerCustomerCategoryTableMap::SIRET)) $criteria->add(CustomerCustomerCategoryTableMap::SIRET, $this->siret);
-        if ($this->isColumnModified(CustomerCustomerCategoryTableMap::VAT)) $criteria->add(CustomerCustomerCategoryTableMap::VAT, $this->vat);
 
         return $criteria;
     }
@@ -1056,8 +944,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
     {
         $copyObj->setCustomerId($this->getCustomerId());
         $copyObj->setCustomerCategoryId($this->getCustomerCategoryId());
-        $copyObj->setSiret($this->getSiret());
-        $copyObj->setVat($this->getVat());
         if ($makeNew) {
             $copyObj->setNew(true);
         }
@@ -1137,8 +1023,6 @@ abstract class CustomerCustomerCategory implements ActiveRecordInterface
     {
         $this->customer_id = null;
         $this->customer_category_id = null;
-        $this->siret = null;
-        $this->vat = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();

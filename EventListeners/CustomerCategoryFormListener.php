@@ -38,10 +38,6 @@ class CustomerCategoryFormListener extends BaseAction implements EventSubscriber
 
     const CUSTOMER_CATEGORY_CODE_FIELD_NAME = 'customer_category_code';
 
-    const CUSTOMER_CATEGORY_SIRET_FIELD_NAME = 'siret';
-
-    const CUSTOMER_CATEGORY_VAT_FIELD_NAME = 'vat';
-
     /** @var \Thelia\Core\HttpFoundation\Request */
     protected $request;
 
@@ -112,32 +108,6 @@ class CustomerCategoryFormListener extends BaseAction implements EventSubscriber
                     'mapped' => false,
                 )
             )
-            ->add(
-                self::CUSTOMER_CATEGORY_SIRET_FIELD_NAME,
-                'text',
-                array(
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => self::trans('Siret number'),
-                    'label_attr' => array(
-                        'for' => 'siret'
-                    ),
-                    'mapped' => false,
-                )
-            )
-            ->add(
-                self::CUSTOMER_CATEGORY_VAT_FIELD_NAME,
-                'text',
-                array(
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => self::trans('Vat'),
-                    'label_attr' => array(
-                        'for' => 'vat'
-                    ),
-                    'mapped' => false,
-                )
-            )
         ;
     }
 
@@ -160,8 +130,6 @@ class CustomerCategoryFormListener extends BaseAction implements EventSubscriber
 
         $cfData = array(
             self::CUSTOMER_CATEGORY_CODE_FIELD_NAME  => (is_null($customerCustomerCategory) or is_null($customerCustomerCategory->getCustomerCategory())) ? '' : $customerCustomerCategory->getCustomerCategory()->getCode(),
-            self::CUSTOMER_CATEGORY_SIRET_FIELD_NAME => is_null($customerCustomerCategory) ? false : $customerCustomerCategory->getSiret(),
-            self::CUSTOMER_CATEGORY_VAT_FIELD_NAME   => is_null($customerCustomerCategory) ? false : $customerCustomerCategory->getVat(),
         );
 
         // Retrieving CustomerCategory choices
@@ -194,34 +162,6 @@ class CustomerCategoryFormListener extends BaseAction implements EventSubscriber
                     ),
                     'mapped' => false,
                     'data' => $cfData[self::CUSTOMER_CATEGORY_CODE_FIELD_NAME],
-                )
-            )
-            ->add(
-                self::CUSTOMER_CATEGORY_SIRET_FIELD_NAME,
-                'text',
-                array(
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => self::trans('Siret number'),
-                    'label_attr' => array(
-                        'for' => 'siret'
-                    ),
-                    'mapped' => false,
-                    'data' => $cfData[self::CUSTOMER_CATEGORY_SIRET_FIELD_NAME],
-                )
-            )
-            ->add(
-                self::CUSTOMER_CATEGORY_VAT_FIELD_NAME,
-                'text',
-                array(
-                    'required' => true,
-                    'empty_data' => false,
-                    'label' => self::trans('Vat'),
-                    'label_attr' => array(
-                        'for' => 'vat'
-                    ),
-                    'mapped' => false,
-                    'data' => $cfData[self::CUSTOMER_CATEGORY_VAT_FIELD_NAME],
                 )
             )
         ;
